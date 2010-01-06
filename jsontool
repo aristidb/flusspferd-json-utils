@@ -1,0 +1,38 @@
+#!/usr/local/bin/flusspferd
+
+const sys = require('system');
+const io = require('io');
+
+var commands = {
+  pretty: function pretty(args) {
+    if (args.length != 1) {
+      print("pretty needs exactly one argument");
+      return;
+    }
+    var file = args[0];
+    var input;
+    if (file == "-")
+      input = sys.stdin;
+    else
+      input = new io.File(file, "r");
+    var data = input.readWhole();
+    var parsed = JSON.parse(data);
+    print(JSON.stringify(parsed, null, 4));
+  }
+};
+
+const args = sys.args;
+
+if (args.length < 2) {
+  print("usage:", args[0], "<command>");
+  quit();
+}
+
+var command = args[1];
+
+if (!commands.hasOwnProperty(command)) {
+  print("unknown command:", command);
+  quit();
+}
+
+commands[command](args.slice(2));
